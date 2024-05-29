@@ -57,7 +57,7 @@ end
 function debugPrint(s)
 	-- Factorio suppresses duplicate prints, so I'm adding random numbers at the start to stop debug lines from being deleted as duplicate.
 	-- It's stupid, but it works, and it's only for debugging.
-	game.print(math.random(0, 9999).."  "..s)
+	game.print(math.random(1000, 9999).." BREAM: "..s)
 end
 
 function boolStr(b)
@@ -391,6 +391,10 @@ script.on_nth_tick(spawnEveryTicks,
 
 		for i, surfaceName in pairs(surfacesForSpawns) do
 			local surface = game.get_surface(surfaceName)
+			if surface == nil then
+				debug("Surface is nil")
+				return
+			end
 			if not lightLevelAllowsSpawn(surface) then
 				debug("Surface / time-of-day isn't dark enough to spawn.")
 				return
