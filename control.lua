@@ -279,6 +279,10 @@ function getBugSize(bugClass, evolutionFactor)
 	end
 end
 
+function pollutionForBug(bugName)
+	return game.entity_prototypes[bugName].pollution_to_join_attack * rg("pollution-cost-multiplier")
+end
+
 function selectBugs(pollutionInChunk, evolutionFactor)
 	local bugClasses = getBugClasses()
 	local bugClassSubset = {} -- Subset of bug classes to use for this swarm.
@@ -299,15 +303,17 @@ function selectBugs(pollutionInChunk, evolutionFactor)
 	debug("Pollution budget is "..math.floor(pollutionBudget).." for a chunk with pollution "..math.floor(pollutionInChunk)..".")
 	local pollutionSpent = 0.0
 	local bugs = {}
+	local bugTypeToPollution = {}
 	for i = 1, rg("max-bugs-per-swarm") do
 		local bugClass = bugClassSubset[math.random(#bugClassSubset)]
 		local bugSize = getBugSize(bugClass, evolutionFactor)
 		local bugName = bugSize .. "-" .. bugClass
-		local pollutionForThisBug = game.entity_prototypes[bugName].pollution_to_join_attack * rg("pollution-cost-multiplier")
+		local pollutionForThisBug = pollutionForBug(bugName)
 		if (pollutionSpent + pollutionForThisBug) > pollutionBudget then
 			debug("Couldn't afford next bug "..bugName.." for "..pollutionForThisBug.." pollution.")
 			break
 		end
+		bugTypeToPollution[bugName] = (bugTypeToPollution[bugName] or 0) + pollutionForThisBug
 		pollutionSpent = pollutionSpent + pollutionForThisBug
 		debug("Bought "..bugName.." for "..pollutionForThisBug.." pollution, remaining budget: "..math.floor(pollutionBudget-pollutionSpent))
 		table.insert(bugs, bugName)
@@ -317,7 +323,7 @@ function selectBugs(pollutionInChunk, evolutionFactor)
 	else
 		debug("Couldn't afford any bugs :(") -- Happens sometimes in low-pollution chunks with high evolution.
 	end
-	return {bugs, pollutionSpent}
+	return {bugs, pollutionSpent, bugTypeToPollution}
 end
 
 ------------------------------------------------------------------------
@@ -327,6 +333,12 @@ function spawnEnemyAt(bugName, pos, group, surface)
 	local bug = surface.create_entity{name = bugName, position = pos}
 	bug.ai_settings.allow_try_return_to_spawner = false
 	group.add_member(bug)
+end
+
+function logBugPollutionToStats(bugTypeToPollution)
+	for bugType, pollution in pairs(bugTypeToPollution) do
+		game.pollution_statistics.on_flow(bugType, -pollution)
+	end
 end
 
 function spawnEnemyGroupAt(centerPos, surface)
@@ -344,9 +356,10 @@ function spawnEnemyGroupAt(centerPos, surface)
 	local bugsAndPollutionSpent = selectBugs(pollution, game.forces.enemy.evolution_factor)
 	local bugs = bugsAndPollutionSpent[1]
 	local pollutionSpent = bugsAndPollutionSpent[2]
+	local bugTypeToPollution = bugsAndPollutionSpent[3]
 	if #bugs == 0 then return end
 	surface.pollute(centerPos, -pollutionSpent)
-	-- TODO We should log this pollution somehow so that the statistics screen updates properly.
+	logBugPollutionToStats(bugTypeToPollution)
 	local group = surface.create_unit_group{position = centerPos}
 	for i = 1, #bugs do
 		spawnEnemyAt(bugs[i], bugPos, group, surface)
