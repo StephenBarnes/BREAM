@@ -111,11 +111,19 @@ data:extend({
     },
     {
         type = "int-setting",
+        name = "BREAM-lit-safe-tile-spawn-block-radius",
+        setting_type = "runtime-global",
+        default_value = 0,
+        minimum_value = 0,
+        order = "h",
+    },
+    {
+        type = "int-setting",
         name = "BREAM-entity-spawn-block-radius",
         setting_type = "runtime-global",
         default_value = 15,
         minimum_value = 0,
-        order = "h",
+        order = "i",
     },
     {
         type = "double-setting",

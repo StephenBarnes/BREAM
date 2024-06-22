@@ -77,6 +77,7 @@ function playerPosDebug()
 		debugPrint("Nearby lamps allow spawn: "..boolStr(nearbyLampsAllowSpawn(pos, surface)))
 		debugPrint("Nearby water tiles allow spawn: "..boolStr(nearbyLampsAllowSpawn(pos, surface)))
 		debugPrint("Nearby safe tiles allow spawn: "..boolStr(nearbySafeTilesAllowSpawn(pos, surface)))
+		debugPrint("Nearby lit safe tiles allow spawn: "..boolStr(nearbyLitSafeTilesAllowSpawn(pos, surface)))
 		debugPrint("Nearby entities allow spawn: "..boolStr(nearbyEntitiesAllowSpawn(pos, surface)))
 	end
 end
@@ -90,6 +91,10 @@ end
 
 function lightLevelAllowsSpawn(surface)
 	if not rg("only-spawn-when-dark") then return true end
+	return surfaceIsDark(surface)
+end
+
+function surfaceIsDark(surface)
 	--return (surface.daytime > surface.dusk) and (surface.daytime < surface.dawn)
 	-- From testing, this spawns when it's still light.
 	-- Instead, I'll do what the Rampant mod's "nocturnal" setting uses, which is to check that darkness is over 0.65.
@@ -142,12 +147,9 @@ local assemblerLightRadius = {
 }
 local maxLampLightRadius = 29
 
-function nearbyLampsAllowSpawn(pos, surface)
-	local safetyFactor = rg("lamp-safety-factor")
-	if safetyFactor == 0 then return true end
-
+function hasNearbyLamp(pos, surface, lampRadMultiplier)
 	-- Check all lamps registered as lamps.
-	local searchRadius = safetyFactor * maxLampLightRadius
+	local searchRadius = lampRadMultiplier * maxLampLightRadius
 	local lamps = surface.find_entities_filtered{position=pos, radius=searchRadius, type="lamp"}
 	for i, lamp in pairs(lamps) do
 		if isLampOn(lamp, surface) then
@@ -156,7 +158,7 @@ function nearbyLampsAllowSpawn(pos, surface)
 			local distanceSq = math.pow(pos.x - x, 2) + math.pow(pos.y - y, 2)
 			local distance = math.sqrt(distanceSq)
 			local lightRadius = lightRadius[lamp.name] or defaultLightRadius
-			if (lightRadius * safetyFactor) > distance then return false end
+			if (lightRadius * lampRadMultiplier) > distance then return true end
 		end
 	end
 
@@ -170,12 +172,18 @@ function nearbyLampsAllowSpawn(pos, surface)
 				local y = (lamp.bounding_box.left_top.y + lamp.bounding_box.right_bottom.y) / 2
 				local distanceSq = math.pow(pos.x - x, 2) + math.pow(pos.y - y, 2)
 				local distance = math.sqrt(distanceSq)
-				if (v * safetyFactor) > distance then return false end
+				if (v * lampRadMultiplier) > distance then return true end
 			end
 		end
 	end
 
-	return true
+	return false
+end
+
+function nearbyLampsAllowSpawn(pos, surface)
+	local safetyFactor = rg("lamp-safety-factor")
+	if safetyFactor == 0 then return true end
+	return not hasNearbyLamp(pos, surface, safetyFactor)
 end
 
 function nearbyWaterTilesAllowSpawn(pos, surface)
@@ -186,12 +194,28 @@ function nearbyWaterTilesAllowSpawn(pos, surface)
 	return waterTileCount == 0
 end
 
-function nearbySafeTilesAllowSpawn(pos, surface)
-	local rad = rg("safe-tile-spawn-block-radius")
-	if rad == 0 then return true end
+function hasNearbySafeTiles(pos, surface, rad)
 	local safeTileCount = surface.count_tiles_filtered(
 		{position=pos, radius=rad, name=safeTiles, limit=1})
-	return safeTileCount == 0
+	return safeTileCount ~= 0
+end
+
+function nearbySafeTilesAllowSpawn(pos, surface, rad)
+	if rad == nil then rad = rg("safe-tile-spawn-block-radius") end
+	if rad == 0 then return true end
+	return not hasNearbySafeTiles(pos, surface, rad)
+end
+
+function nearbyLitSafeTilesAllowSpawn(pos, surface)
+	local rad = rg("lit-safe-tile-spawn-block-radius")
+	if rad == 0 then return true end
+	if hasNearbySafeTiles(pos, surface, rad) then
+		local isLit = (not surfaceIsDark(surface)) or hasNearbyLamp(pos, surface, 1.0)
+		if isLit then
+			return false
+		end
+	end
+	return true
 end
 
 function nearbyEntitiesAllowSpawn(pos, surface)
@@ -216,6 +240,8 @@ function positionAllowsSpawn(pos, surface)
 			debugPrint("Water tiles blocked spawn.")
 		elseif not nearbySafeTilesAllowSpawn(pos, surface) then
 			debugPrint("Safe tiles blocked spawn.")
+		elseif not nearbyLitSafeTilesAllowSpawn(pos, surface) then
+			debugPrint("Lit safe tiles blocked spawn.")
 		elseif not nearbyEntitiesAllowSpawn(pos, surface) then
 			debugPrint("Nearby entities blocked spawn.")
 		end
@@ -225,6 +251,7 @@ function positionAllowsSpawn(pos, surface)
 		and nearbyLampsAllowSpawn(pos, surface)
 		and nearbyWaterTilesAllowSpawn(pos, surface)
 		and nearbySafeTilesAllowSpawn(pos, surface)
+		and nearbyLitSafeTilesAllowSpawn(pos, surface)
 		and nearbyEntitiesAllowSpawn(pos, surface))
 end
 
