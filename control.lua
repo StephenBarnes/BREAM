@@ -255,11 +255,11 @@ function getBugClasses()
 end
 
 local bugClassToSizes = {
-	biter = {"small", "medium", "big", "behemoth"},
-	spitter = {"small", "medium", "big", "behemoth"},
-	["armoured-biter"] = {"small", "medium", "big", "behemoth", "leviathan"},
+	biter = {"small", "small", "medium", "big", "behemoth"},
+	spitter = {"small", "small", "medium", "big", "behemoth"},
+	["armoured-biter"] = {"small", "small", "medium", "big", "behemoth", "leviathan"},
 	-- NOTE The chosen size is linear in evolution, over these lists; for example biters will be small or medium if evolution is between 0 and 0.33, between medium and big if evolution is 0.33 to 0.67, etc.
-	-- So you could repeat sizes in these lists to change the shape of the curve relating evolution to bug size.
+	-- The "small" size is repeated so that all bugs spawned under ~20% evolution are small.
 	-- This mod currently chooses sizes in different ratios than the ones in vanilla.
 }
 function getBugSize(bugClass, evolutionFactor)
@@ -268,6 +268,9 @@ function getBugSize(bugClass, evolutionFactor)
 	local minSizeIdx = math.floor(evolutionFactor * (numSizes - 1)) + 1
 	local maxSizeIdx = minSizeIdx + 1
 	if maxSizeIdx > numSizes then return bugClassToSizes[bugClass][minSizeIdx] end
+	if (bugClassToSizes[bugClass][minSizeIdx] == bugClassToSizes[bugClass][maxSizeIdx]) then
+		return bugClassToSizes[bugClass][minSizeIdx]
+	end
 	local evoPerSizeGap = 1.0 / (numSizes - 1)
 	local minSizeIsAtEvo = evoPerSizeGap * (minSizeIdx - 1)
 	local chanceOfBiggerSize = (evolutionFactor - minSizeIsAtEvo) / evoPerSizeGap
