@@ -4,8 +4,8 @@ Date: 22. 06. 2024
   Features:
     - Added "lit safe tiles" setting.
   Balancing:
-    - Adjusted default settings.
-    - Modified curve of bug size by evolution to only spawn small bugs at low evolution.
+    - Adjusted default settings: increased entity block radius 5->15, lamp safety factor 1->1.2.
+    - Modified curve of bug size by evolution so only small bugs will be spawned at low evolution.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 01. 06. 2024

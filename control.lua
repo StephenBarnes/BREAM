@@ -200,8 +200,8 @@ function hasNearbySafeTiles(pos, surface, rad)
 	return safeTileCount ~= 0
 end
 
-function nearbySafeTilesAllowSpawn(pos, surface, rad)
-	if rad == nil then rad = rg("safe-tile-spawn-block-radius") end
+function nearbySafeTilesAllowSpawn(pos, surface)
+	local rad = rg("safe-tile-spawn-block-radius")
 	if rad == 0 then return true end
 	return not hasNearbySafeTiles(pos, surface, rad)
 end
@@ -211,9 +211,7 @@ function nearbyLitSafeTilesAllowSpawn(pos, surface)
 	if rad == 0 then return true end
 	if hasNearbySafeTiles(pos, surface, rad) then
 		local isLit = (not surfaceIsDark(surface)) or hasNearbyLamp(pos, surface, 1.0)
-		if isLit then
-			return false
-		end
+		return not isLit
 	end
 	return true
 end
