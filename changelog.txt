@@ -1,9 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: 22. 06. 2024
+  Features:
+    - Added "lit safe tiles" setting.
+  Balancing:
+    - Adjusted default settings.
+    - Modified curve of bug size by evolution to only spawn small bugs at low evolution.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 01. 06. 2024
   Features:
-    - Pollution used by BREAM to spawn bugs is now shown in the pollution
-	statistics window.
+    - Pollution used by BREAM to spawn bugs is now shown in the pollution statistics window.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 27. 05. 2024
