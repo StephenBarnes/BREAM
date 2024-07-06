@@ -1,0 +1,1 @@
+require("code/data/ignore-or-target-buildings")
