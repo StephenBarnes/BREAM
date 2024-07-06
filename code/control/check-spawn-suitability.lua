@@ -85,8 +85,8 @@ local function hasNearbyLamp(pos, surface, lampRadMultiplier)
 	-- Check all lamps registered as assemblers.
 	-- Deadlock's Larger Lamps and Industrial Revolution 3 do this for copper and aetheric lamps, so that they can consume fuel items or steam.
 	for k, v in pairs(assemblerLightRadius) do
-		local lamps = surface.find_entities_filtered{position=pos, radius=searchRadius, name=k}
-		for i, lamp in pairs(lamps) do
+		local assemblerLamps = surface.find_entities_filtered{position=pos, radius=searchRadius, name=k}
+		for _, lamp in pairs(assemblerLamps) do
 			if lamp.is_crafting() then
 				local x = (lamp.bounding_box.left_top.x + lamp.bounding_box.right_bottom.x) / 2
 				local y = (lamp.bounding_box.left_top.y + lamp.bounding_box.right_bottom.y) / 2

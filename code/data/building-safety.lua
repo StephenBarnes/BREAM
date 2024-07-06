@@ -1,20 +1,27 @@
-if settings.startup["BREAM-safety-lamps"].value == "military-target" then
-	for _, lamp in pairs(data.raw.lamp) do
-		lamp.is_military_target = true
+local C = require("code/constants")
+
+local function makeTypeMilitaryTarget(typeName)
+	for _, entity in pairs(data.raw[typeName]) do
+		entity.is_military_target = true
 	end
-	for _, assemblerLamp in pairs {
-		"deadlock-copper-lamp",
-		"copper-aetheric-lamp-straight",
-		"copper-aetheric-lamp-end"
-	} do
-		if data.raw["assembling-machine"][assemblerLamp] then
-			data.raw["assembling-machine"][assemblerLamp].is_military_target = true
+end
+
+for category, types in pairs(C.safetyCategoryToTypes) do
+	if settings.startup["BREAM-safety-"..category].value == "military-target" then
+		for typeName, _ in pairs(types) do
+			makeTypeMilitaryTarget(typeName)
 		end
 	end
 end
 
-if settings.startup["BREAM-safety-power-poles"].value == "military-target" then
-	for _, pole in pairs(data.raw["electric-pole"]) do
-		pole.is_military_target = true
-	end
+for category, specialEnts in pairs(C.safetyCategoryToSpecial) do
+    if settings.startup["BREAM-safety-"..category].value == "military-target" then
+		for typeName, entityNameSet in pairs(specialEnts) do
+			for entityName, _ in pairs(entityNameSet) do
+				if data.raw[typeName][entityName] ~= nil then
+					data.raw[typeName][entityName].is_military_target = true
+				end
+			end
+        end
+    end
 end
