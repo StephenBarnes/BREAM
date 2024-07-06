@@ -149,7 +149,7 @@ end
 ------------------------------------------------------------------------
 
 Export.positionAllowsSpawn = function(pos, surface)
-	if U.mapSetting("debug-printing") then
+	if U.mapSetting("debug-printing") == "all" then
 		if not nearbyEnemiesAllowSpawn(pos, surface) then
 			U.debugPrint("Nearby enemies blocked spawn.")
 		elseif not nearbyPlayersAllowSpawn(pos, surface) then

@@ -83,7 +83,11 @@ Export.selectBugs = function(pollutionInChunk, evolutionFactor)
 		table.insert(bugs, bugName)
 	end
 	if #bugs > 0 then
-		U.printIfDebug("Purchased a swarm of "..#bugs.." bugs for "..math.floor(pollutionSpent).." pollution.")
+		if U.mapSetting("debug-printing") == "all" then
+			U.debugPrint("Purchased a swarm of "..#bugs.." bugs for "..math.floor(pollutionSpent).." pollution.")
+		elseif U.mapSetting("debug-printing") == "report-spawns" then
+			U.debugPrint("Spawned "..#bugs.." bugs.")
+		end
 	else
 		U.printIfDebug("Couldn't afford any bugs :(") -- Happens sometimes in low-pollution chunks with high evolution.
 	end

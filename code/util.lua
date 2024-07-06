@@ -34,7 +34,13 @@ Util.debugPrint = function(s)
 end
 
 Util.printIfDebug = function(s)
-	if Util.mapSetting("debug-printing") then
+	if Util.mapSetting("debug-printing") == "all" then
+		Util.debugPrint(s)
+	end
+end
+
+Util.printIfDebugAllOrSpawns = function(s)
+	if Util.mapSetting("debug-printing") == "all" or Util.mapSetting("debug-printing") == "report-spawns" then
 		Util.debugPrint(s)
 	end
 end

@@ -33,14 +33,13 @@ local function considerSpawningEnemiesOnChunk(chunk, surface)
 end
 
 local function onNthTick(event)
-	if U.mapSetting("player-pos-debug") then
+	if U.mapSetting("debug-printing") == "player-pos" then
 		Checks.playerPosDebug()
-		return
-	end
-	if U.mapSetting("debug-printing") then
+	elseif U.mapSetting("debug-printing") == "all" then
 		U.debugPrint("--------------------")
 		U.debugPrint("BREAM: debug printing enabled, checking.")
 	end
+
 	local spawnAtAllChance = U.mapSetting("spawn-at-all-chance")
 	if (spawnAtAllChance < 1.0) and (math.random() > spawnAtAllChance) then
 		U.printIfDebug("Spawn-at-all-chance prevented spawn.")

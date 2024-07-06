@@ -63,7 +63,14 @@ addSetting("pollution-for-max-spawn-chance", "double", "runtime-global", 100, 0)
 addSetting("spawn-chance-at-max-pollution", "double", "runtime-global", 1.0, 0, 1)
 addSetting("pollution-fraction-per-swarm-min", "double", "runtime-global", 0.3, 0, 1)
 addSetting("pollution-fraction-per-swarm-max", "double", "runtime-global", 0.9, 0, 1)
-addSetting("debug-printing", "bool", "runtime-global", false)
-addSetting("player-pos-debug", "bool", "runtime-global", false)
+
+table.insert(newSettings, {
+    type = "string-setting",
+    name = "BREAM-debug-printing",
+    setting_type = "runtime-global",
+    default_value = "off",
+    allowed_values = {"off", "player-pos", "report-spawns", "all"},
+    order = nextOrder(),
+})
 
 data:extend(newSettings)
