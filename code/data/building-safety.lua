@@ -15,13 +15,13 @@ for category, types in pairs(C.safetyCategoryToTypes) do
 end
 
 for category, specialEnts in pairs(C.safetyCategoryToSpecial) do
-    if settings.startup["BREAM-safety-"..category].value == "military-target" then
+	if settings.startup["BREAM-safety-"..category].value == "military-target" then
 		for typeName, entityNameSet in pairs(specialEnts) do
 			for entityName, _ in pairs(entityNameSet) do
 				if data.raw[typeName][entityName] ~= nil then
 					data.raw[typeName][entityName].is_military_target = true
 				end
 			end
-        end
-    end
+		end
+	end
 end

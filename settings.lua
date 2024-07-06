@@ -2,37 +2,37 @@ local newSettings = {}
 
 local nextOrderNum = 0
 local function nextOrder()
-    nextOrderNum = nextOrderNum + 1
-    return string.format("%03d", nextOrderNum)
+	nextOrderNum = nextOrderNum + 1
+	return string.format("%03d", nextOrderNum)
 end
 
 local function addSetting(name, valType, stage, default, minVal, maxVal)
-    table.insert(newSettings, {
-        type = valType.."-setting",
-        name = "BREAM-"..name,
-        setting_type = stage,
-        default_value = default,
-        order = nextOrder(),
-        minimum_value = minVal,
-        maximum_value = maxVal,
-    })
+	table.insert(newSettings, {
+		type = valType .. "-setting",
+		name = "BREAM-" .. name,
+		setting_type = stage,
+		default_value = default,
+		order = nextOrder(),
+		minimum_value = minVal,
+		maximum_value = maxVal,
+	})
 end
 
 local function addSafetySetting(name, default)
-    table.insert(newSettings, {
-        type = "string-setting",
-        name = "BREAM-safety-"..name,
-        setting_type = "startup",
-        default_value = default,
-        allowed_values = {"military-target", "default", "safe"},
-        order = nextOrder(),
-    })
+	table.insert(newSettings, {
+		type = "string-setting",
+		name = "BREAM-safety-" .. name,
+		setting_type = "startup",
+		default_value = default,
+		allowed_values = { "military-target", "default", "safe" },
+		order = nextOrder(),
+	})
 end
 
 addSetting("surfaces-to-spawn-on", "string", "startup", "nauvis")
 addSetting("safe-tiles", "string", "startup",
-    "stone-path,concrete,refined-concrete,tarmac,hazard-concrete-left,hazard-concrete-right,refined-hazard-concrete-left,refined-hazard-concrete-right")
-    -- TODO add paving tiles from mods, eg the stone path from Space Exploration
+	"stone-path,concrete,refined-concrete,tarmac,hazard-concrete-left,hazard-concrete-right,refined-hazard-concrete-left,refined-hazard-concrete-right")
+-- TODO add paving tiles from mods, eg the stone path from Space Exploration
 addSetting("spawn-every-seconds", "double", "startup", 2.0, 0.1)
 addSetting("enemy-spawner-health-multiplier", "double", "startup", 1.0, 0.0)
 addSetting("enemy-spawner-healing-multiplier", "double", "startup", 1.0, 0.0)
@@ -65,12 +65,12 @@ addSetting("pollution-fraction-per-swarm-min", "double", "runtime-global", 0.3, 
 addSetting("pollution-fraction-per-swarm-max", "double", "runtime-global", 0.9, 0, 1)
 
 table.insert(newSettings, {
-    type = "string-setting",
-    name = "BREAM-debug-printing",
-    setting_type = "runtime-global",
-    default_value = "off",
-    allowed_values = {"off", "player-pos", "report-spawns", "all"},
-    order = nextOrder(),
+	type = "string-setting",
+	name = "BREAM-debug-printing",
+	setting_type = "runtime-global",
+	default_value = "off",
+	allowed_values = { "off", "player-pos", "report-spawns", "all" },
+	order = nextOrder(),
 })
 
 data:extend(newSettings)
