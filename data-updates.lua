@@ -1,1 +1,1 @@
-require("code/data/ignore-or-target-buildings")
+require("code/data/building-safety")

@@ -1,4 +1,4 @@
-if settings.startup["BREAM-make-lamps-military-targets"].value then
+if settings.startup["BREAM-safety-lamps"].value == "military-target" then
 	for _, lamp in pairs(data.raw.lamp) do
 		lamp.is_military_target = true
 	end
@@ -13,7 +13,7 @@ if settings.startup["BREAM-make-lamps-military-targets"].value then
 	end
 end
 
-if settings.startup["BREAM-make-electric-poles-military-targets"].value then
+if settings.startup["BREAM-safety-power-poles"].value == "military-target" then
 	for _, pole in pairs(data.raw["electric-pole"]) do
 		pole.is_military_target = true
 	end
