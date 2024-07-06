@@ -33,7 +33,7 @@ addSetting("surfaces-to-spawn-on", "string", "startup", "nauvis")
 addSetting("safe-tiles", "string", "startup",
     "stone-path,concrete,refined-concrete,tarmac,hazard-concrete-left,hazard-concrete-right,refined-hazard-concrete-left,refined-hazard-concrete-right")
     -- TODO add paving tiles from mods, eg the stone path from Space Exploration
-addSetting("spawn-every-seconds", "double", "startup", 1.0, 0.1)
+addSetting("spawn-every-seconds", "double", "startup", 2.0, 0.1)
 addSetting("enemy-spawner-health-multiplier", "double", "startup", 1.0, 0.0)
 addSetting("enemy-spawner-healing-multiplier", "double", "startup", 1.0, 0.0)
 
