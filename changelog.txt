@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.4.0
+Date: 10. 08. 2024
+  Features:
+    - Added compatibility for Toxic Biters mod, Frost Biters mod, and Explosive Biters mod.
+    - Bugs now spawn in the same size ratios as in the vanilla game. Supported mods' bugs spawn in the same size ratios as in their respective mods.
+    - Mods' bug types (armoured, toxic, frost, explosive) will only spawn once evolution is over 10%.
+  Changes:
+    - TODO increase default grace time
+    - TODO change default setting for what fraction of chunk's pollution to consume per spawn, so that bugs are spawned more frequently but in smaller groups
+---------------------------------------------------------------------------------------------------
 Version: 1.3.0
 Date: 07. 07. 2024
   Features:

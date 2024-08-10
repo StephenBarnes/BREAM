@@ -49,4 +49,8 @@ Util.boolStr = function(b)
 	if (b) then return "TRUE" else return "FALSE" end
 end
 
+Util.ifThenElse = function(cond, thenVal, elseVal)
+	if cond then return thenVal else return elseVal end
+end
+
 return Util
