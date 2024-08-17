@@ -38,10 +38,9 @@ addSetting("enemy-spawner-health-multiplier", "double", "startup", 1.0, 0.0)
 addSetting("enemy-spawner-healing-multiplier", "double", "startup", 1.0, 0.0)
 
 addSafetySetting("lamps", "military-target")
+addSafetySetting("power-poles", "default")
 addSafetySetting("railways", "safe")
 addSafetySetting("rail-signals", "safe")
-addSafetySetting("nonlarge-power-poles", "default")
-addSafetySetting("large-power-poles", "default")
 
 addSetting("pollution-cost-multiplier", "double", "runtime-global", 0.5, 0.01)
 addSetting("max-bugs-per-swarm", "int", "runtime-global", 50, 1)

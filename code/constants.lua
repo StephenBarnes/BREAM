@@ -11,23 +11,13 @@ end
 
 Export.safetyCategoryToTypes = { -- Types of entities controlled by the safety settings.
 	["lamps"] = listToSet{"lamp"},
-	["large-power-poles"] = {},
-	["nonlarge-power-poles"] = {},
+	["power-poles"] = listToSet{"electric-pole"},
 	["railways"] = listToSet{"straight-rail", "curved-rail"},
 	["rail-signals"] = listToSet{"rail-signal", "rail-chain-signal"},
 }
-Export.safetyCategoryToSpecial = { -- Entities that belong in these safety categories, but we're not including the entire type.
+Export.safetyCategoryToSpecial = { -- Entities that belong in these safety categories, but are not in the expected type.
 	["lamps"] = {
 		["assembling-machine"] = listToSet{"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "copper-aetheric-lamp-end"},
-	},
-	["large-power-poles"] = {
-		["electric-pole"] = listToSet{"big-electric-pole"},
-	},
-	["nonlarge-power-poles"] = {
-		["electric-pole"] = listToSet {
-			"small-electric-pole", "medium-electric-pole", "substation", -- vanilla
-			"big-wooden-pole", "small-iron-pole", "small-bronze-pole", -- IR3
-		},
 	},
 }
 
