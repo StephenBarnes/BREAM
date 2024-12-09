@@ -6,7 +6,7 @@ local function nextOrder()
 	return string.format("%03d", nextOrderNum)
 end
 
-local function addSetting(name, valType, stage, default, minVal, maxVal)
+local function addSetting(name, valType, stage, default, minVal, maxVal, allowBlank)
 	table.insert(newSettings, {
 		type = valType .. "-setting",
 		name = "BREAM-" .. name,
@@ -15,6 +15,7 @@ local function addSetting(name, valType, stage, default, minVal, maxVal)
 		order = nextOrder(),
 		minimum_value = minVal,
 		maximum_value = maxVal,
+		allow_blank = allowBlank,
 	})
 end
 
@@ -29,8 +30,8 @@ local function addSafetySetting(name, default)
 	})
 end
 
-addSetting("surfaces-to-spawn-nauvis-enemies", "string", "startup", "nauvis")
-addSetting("surfaces-to-spawn-gleba-enemies", "string", "startup", "gleba")
+addSetting("surfaces-to-spawn-nauvis-enemies", "string", "startup", "nauvis", nil, nil, true)
+addSetting("surfaces-to-spawn-gleba-enemies", "string", "startup", "gleba", nil, nil, true)
 addSetting("safe-tiles", "string", "startup",
 	"stone-path,concrete,refined-concrete,tarmac,hazard-concrete-left,hazard-concrete-right,refined-hazard-concrete-left,refined-hazard-concrete-right")
 -- TODO add paving tiles from mods, eg the stone path from Space Exploration

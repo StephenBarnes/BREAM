@@ -3,6 +3,7 @@ local Export = {}
 Export.spawnEveryTicks = settings.startup["BREAM-spawn-every-seconds"].value * 60
 
 local function splitToList(s)
+	if s == "" then return {} end
 	local result = {}
 	for word in string.gmatch(s, '([^,]+)') do
 		table.insert(result, word)
