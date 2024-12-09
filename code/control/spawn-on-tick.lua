@@ -3,14 +3,17 @@ local Const = require("code/control/control-constants")
 local Checks = require("code/control/check-spawn-suitability")
 local Spawn = require("code/control/spawn-bugs")
 
-local function getSpawnChance(pollution)
+---@param pollution number
+---@param pollutionType string
+local function getSpawnChance(pollution, pollutionType)
 	-- Return probability that a swarm should spawn in a chunk, given pollution.
-	if pollution < U.mapSetting("min-pollution-for-spawn") then
+	local minVal = U.ifThenElse(pollutionType == "spores", U.mapSetting("min-spores-for-spawn"), U.mapSetting("min-pollution-for-spawn"))
+	if pollution < minVal then
 		return 0
 	elseif pollution > U.mapSetting("pollution-for-max-spawn-chance") then
 		return U.mapSetting("spawn-chance-at-max-pollution")
 	else
-		local x = (pollution - U.mapSetting("min-pollution-for-spawn")) / (U.mapSetting("pollution-for-max-spawn-chance")- U.mapSetting("min-pollution-for-spawn"))
+		local x = (pollution - minVal) / (U.mapSetting("pollution-for-max-spawn-chance") - minVal)
 		return U.mapSetting("spawn-chance-at-min-pollution") + (x * (U.mapSetting("spawn-chance-at-max-pollution") - U.mapSetting("spawn-chance-at-min-pollution")))
 	end
 end
@@ -20,9 +23,11 @@ end
 ---@param enemyPhylum string
 local function considerSpawningEnemiesOnChunk(chunk, surface, enemyPhylum)
 	local pollution = surface.get_pollution(chunk.area.left_top)
-	local spawnChance = getSpawnChance(pollution)
+	local pollutionType = surface.pollutant_type.name
+	local spawnChance = getSpawnChance(pollution, pollutionType)
 	if spawnChance == 0 then
-		U.printIfDebug("Chunk pollution ("..math.floor(pollution)..") is too low to spawn; minimum is "..U.mapSetting("min-pollution-for-spawn")..".")
+		local minVal = U.ifThenElse(pollutionType == "spores", U.mapSetting("min-spores-for-spawn"), U.mapSetting("min-pollution-for-spawn"))
+		U.printIfDebug("Chunk pollution/spores ("..math.floor(pollution)..") is too low to spawn; minimum is "..minVal..".")
 		return
 	end
 	if math.random() > spawnChance then

@@ -234,7 +234,8 @@ local function pollutionForBug(bugName, pollutionType)
 		log("Error: bug "..bugName.." has no prototype or no pollution_to_join_attack")
 		return 1000000
 	end
-	return prototypes.entity[bugName].absorptions_to_join_attack[pollutionType] * U.mapSetting("pollution-cost-multiplier")
+	local multiplier = U.ifThenElse(pollutionType == "spores", U.mapSetting("spores-cost-multiplier"), U.mapSetting("pollution-cost-multiplier"))
+	return prototypes.entity[bugName].absorptions_to_join_attack[pollutionType] * multiplier
 end
 
 local function getPollutionBudget(pollutionInChunk)
@@ -304,13 +305,9 @@ local selectBugs = function(pollutionInChunk, evolutionFactor, pollutionType, en
 	end
 
 	if #bugs > 0 then
-		if U.mapSetting("debug-printing") == "all" then
-			U.debugPrint("Purchased a swarm of "..#bugs.." bugs for "..math.floor(pollutionSpent).." pollution.")
-		elseif U.mapSetting("debug-printing") == "report-spawns" then
-			U.debugPrint("Spawned "..#bugs.." bugs.")
-		end
+		U.printIfDebug("Purchased a swarm of "..#bugs.." bugs for "..math.floor(pollutionSpent).." pollution.")
 	else
-		U.printIfDebug("Couldn't afford any bugs :(") -- Happens sometimes in low-pollution chunks with high evolution.
+		U.printIfDebug("Couldn't afford any bugs :(") -- Happens sometimes, especially in low-pollution chunks with high evolution.
 	end
 	return {bugs, pollutionSpent, bugIdToPollution}
 end

@@ -2,11 +2,12 @@
 Version: 2.0.0
 Date: 9. 12. 2024
   Features:
-    - TODO Ported to Factorio 2.0.
-    - TODO Works with or without Space Age. Enemies are spawned on Nauvis, and also Gleba if Space Age is enabled.
-    - TODO Added compatibility with Behemoth Enemies mod.
+    - Updated to Factorio 2.0.
+    - Works with or without Space Age. Enemies are spawned on Nauvis and Gleba.
+    - Added separate consumption multipliers for pollution vs spores, and separate min-pollution settings for pollution and spores. (Necessary because spore amounts tend to be lower than pollution.)
+  Balancing:
+    - Changed default settings to be somewhat harder, and create fewer, larger attacks. (But there's still frequent groups of 1-2 to probe your defenses.)
   Changes:
-    - Changed default settings so safe tiles (brick, concrete, etc.) now block spawns by default.
     - Setting with list of surfaces to spawn enemies onto has now been separated by enemy "phylum" (Nauvian bugs vs Gleban pentapods).
     - Removed compatibility with Larger Lamps and Industrial Revolution 3, which aren't ported to Factorio 2.0. (Still compatible with Armoured Biters, Explosive Biters, Frost Biters, Toxic Biters.)
 ---------------------------------------------------------------------------------------------------

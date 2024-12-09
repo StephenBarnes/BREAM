@@ -32,7 +32,7 @@ end
 ---@param surface LuaSurface
 ---@param enemyPhylum string
 Export.spawnEnemyGroupAt = function(centerPos, surface, enemyPhylum)
-	U.printIfDebugAllOrSpawns("Spawning a swarm on " .. surface.name .. ": " .. math.floor(centerPos.x) .. "," .. math.floor(centerPos.y))
+	U.printIfDebug("Trying to spawn a swarm on " .. surface.name .. ": " .. math.floor(centerPos.x) .. "," .. math.floor(centerPos.y))
 	local bugPos = surface.find_non_colliding_position("behemoth-biter", centerPos, CC.spawnPosTolerance, 0.1)
 	if bugPos == nil then
 		U.printIfDebug("Couldn't find a non-colliding position for bugs")
@@ -59,6 +59,7 @@ Export.spawnEnemyGroupAt = function(centerPos, surface, enemyPhylum)
 		spawnEnemyAt(bugs[i], bugPos, group, surface)
 	end
 	group.set_autonomous()
+	U.printIfDebugAllOrSpawns("Spawned a swarm of " .. #bugs .. " bugs on " .. surface.name .. ": " .. math.floor(centerPos.x) .. "," .. math.floor(centerPos.y))
 end
 
 return Export
