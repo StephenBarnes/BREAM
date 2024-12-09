@@ -110,7 +110,8 @@ local function nearbyWaterTilesAllowSpawn(pos, surface)
 	local rad = U.mapSetting("water-tile-spawn-block-radius")
 	if rad == 0 then return true end
 	local waterTileCount = surface.count_tiles_filtered(
-		{position=pos, radius=rad, collision_mask="water-tile", limit=1})
+		{position=pos, radius=rad, collision_mask={"water_tile", "lava_tile"}, limit=1})
+	-- I'm counting lava tiles as water.
 	return waterTileCount == 0
 end
 

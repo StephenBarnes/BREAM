@@ -55,7 +55,7 @@ local function onNthTick(event)
 			local surface = game.get_surface(surfaceName)
 			if surface == nil then
 				-- Could happen eg if Gleba hasn't been visited yet.
-				U.printIfDebug("Surface is nil")
+				U.printIfDebug("Surface "..surfaceName.." is nil")
 				return
 			end
 			if not Checks.lightLevelAllowsSpawn(surface) then
