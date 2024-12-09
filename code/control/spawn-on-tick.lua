@@ -79,7 +79,7 @@ local function onNthTick(event)
 				end
 			else -- check only a few random chunks
 				for chunkNum = 1, numChunksToCheck do
-					if numChunksToCheck > 1 then U.printIfDebug("Spawn attempt #" .. chunkNum) end
+					if numChunksToCheck > 1 then U.printIfDebug("["..surfaceName.."] Spawn attempt #" .. chunkNum) end
 					local chunkPos = surface.get_random_chunk()
 					if surface.is_chunk_generated { chunkPos.x, chunkPos.y } then
 						considerSpawningEnemiesOnChunk(U.getChunkPosAndArea(chunkPos), surface, phylumSurfaces.phylum)

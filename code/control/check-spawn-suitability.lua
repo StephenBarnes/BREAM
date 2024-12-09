@@ -21,8 +21,11 @@ Export.lightLevelAllowsSpawn = function(surface)
 	return surfaceIsDark(surface)
 end
 
+---@param pos table
+---@param surface LuaSurface
 local function nearbyEnemiesAllowSpawn(pos, surface)
 	local rad = U.mapSetting("enemy-spawn-block-radius")
+	---@cast rad number
 	if rad == 0 then return true end
 	local nearbyEnemyCount = #(surface.find_enemy_units(pos, rad))
 	return nearbyEnemyCount < U.mapSetting("enemy-count-for-spawn-blocking")
