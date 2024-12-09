@@ -15,7 +15,10 @@ local function getSpawnChance(pollution)
 	end
 end
 
-local function considerSpawningEnemiesOnChunk(chunk, surface)
+---@param chunk ChunkPositionAndArea
+---@param surface LuaSurface
+---@param enemyPhylum string
+local function considerSpawningEnemiesOnChunk(chunk, surface, enemyPhylum)
 	local pollution = surface.get_pollution(chunk.area.left_top)
 	local spawnChance = getSpawnChance(pollution)
 	if spawnChance == 0 then
@@ -29,9 +32,10 @@ local function considerSpawningEnemiesOnChunk(chunk, surface)
 
 	local spawnPos = U.randomPosInside(chunk.area)
 	if not Checks.positionAllowsSpawn(spawnPos, surface) then return end
-	Spawn.spawnEnemyGroupAt(spawnPos, surface)
+	Spawn.spawnEnemyGroupAt(spawnPos, surface, enemyPhylum)
 end
 
+---@param event EventData.on_tick
 local function onNthTick(event)
 	if U.mapSetting("debug-printing") == "player-pos" then
 		Checks.playerPosDebug()
@@ -46,39 +50,42 @@ local function onNthTick(event)
 		return
 	end
 
-	for _, surfaceName in pairs(Const.surfacesForSpawns) do
-		local surface = game.get_surface(surfaceName)
-		if surface == nil then
-			U.printIfDebug("Surface is nil")
-			return
-		end
-		if not Checks.lightLevelAllowsSpawn(surface) then
-			U.printIfDebug("Surface / time-of-day isn't dark enough to spawn.")
-			return
-		end
-		if Checks.startingPeaceActive() then
-			U.printIfDebug("Starting peace time prevented spawn.")
-			return
-		end
-
-		U.printIfDebug("Time allows spawn, checking chunks.")
-		local numChunksToCheck = U.mapSetting("num-chunks-to-check")
-		if numChunksToCheck == 0 then -- check all of them
-			for chunk in surface.get_chunks() do
-				if surface.is_chunk_generated { chunk.x, chunk.y } then
-					considerSpawningEnemiesOnChunk(chunk, surface)
-				else
-					U.printIfDebug("Spawn prevented by chunk not being generated.")
-				end
+	for _, phylumSurfaces in pairs(Const.phylumSurfaces) do
+		for _, surfaceName in pairs(phylumSurfaces.surfaceNames) do
+			local surface = game.get_surface(surfaceName)
+			if surface == nil then
+				-- Could happen eg if Gleba hasn't been visited yet.
+				U.printIfDebug("Surface is nil")
+				return
 			end
-		else -- check only a few random chunks
-			for chunkNum = 1, numChunksToCheck do
-				if numChunksToCheck > 1 then U.printIfDebug("Spawn attempt #" .. chunkNum) end
-				local chunkPos = surface.get_random_chunk()
-				if surface.is_chunk_generated { chunkPos.x, chunkPos.y } then
-					considerSpawningEnemiesOnChunk(U.getChunkPosAndArea(chunkPos), surface)
-				else
-					U.printIfDebug("Spawn prevented by chunk not being generated.")
+			if not Checks.lightLevelAllowsSpawn(surface) then
+				U.printIfDebug("Surface / time-of-day isn't dark enough to spawn.")
+				return
+			end
+			if Checks.startingPeaceActive() then
+				U.printIfDebug("Starting peace time prevented spawn.")
+				return
+			end
+
+			U.printIfDebug("Time allows spawn, checking chunks.")
+			local numChunksToCheck = U.mapSetting("num-chunks-to-check")
+			if numChunksToCheck == 0 then -- check all of them
+				for chunk in surface.get_chunks() do
+					if surface.is_chunk_generated { chunk.x, chunk.y } then
+						considerSpawningEnemiesOnChunk(chunk, surface, phylumSurfaces.phylum)
+					else
+						U.printIfDebug("Spawn prevented by chunk not being generated.")
+					end
+				end
+			else -- check only a few random chunks
+				for chunkNum = 1, numChunksToCheck do
+					if numChunksToCheck > 1 then U.printIfDebug("Spawn attempt #" .. chunkNum) end
+					local chunkPos = surface.get_random_chunk()
+					if surface.is_chunk_generated { chunkPos.x, chunkPos.y } then
+						considerSpawningEnemiesOnChunk(U.getChunkPosAndArea(chunkPos), surface, phylumSurfaces.phylum)
+					else
+						U.printIfDebug("Spawn prevented by chunk not being generated.")
+					end
 				end
 			end
 		end

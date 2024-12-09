@@ -5,6 +5,7 @@ local U = require("code/util")
 
 -- Table mapping bug class name to a table with:
 -- * fromMod: id of mod that added this bug class, so we only spawn bugs from mods that are enabled
+-- * phylum: table mapping enemy phylums (nauvis, gleba, maybe others later) to true if this bug class is included in that phylum. (Bugs can be in more than 1 phylum.)
 -- * minEvolution: minimum evolution to start spawning this bug class
 -- * sizes: table mapping unit-size id to list of {evolution factor, weight}.
 --     The evolution factors and weights work the same way as base game's SpawnPointDefinition.
@@ -16,6 +17,7 @@ local U = require("code/util")
 local bugClassesData = {
 	["biter"] = {
 		fromMod = "base",
+		phylum = {nauvis=true},
 		minEvolution = 0,
 		sizes = {
 			-- These values are copied from the vanilla game's biter spawner prototype.
@@ -27,6 +29,7 @@ local bugClassesData = {
 	},
 	["spitter"] = {
 		fromMod = "base",
+		phylum = {nauvis=true},
 		minEvolution = 0,
 		sizes = {
 			-- These values are copied from the vanilla game's spitter spawner prototype.
@@ -40,6 +43,7 @@ local bugClassesData = {
 	},
 	["armoured-biter"] = {
 		fromMod = "ArmouredBiters",
+		phylum = {nauvis=true},
 		minEvolution = .05,
 		sizes = {
 			-- These values are copied from the values in the Armoured Biters mod.
@@ -52,6 +56,7 @@ local bugClassesData = {
 	},
 	["toxic"] = {
 		fromMod = "Toxic_biters",
+		phylum = {nauvis=true},
 		minEvolution = .1,
 		sizes = {
 			-- These values are copied from the values in the Toxic Biters mod.
@@ -76,6 +81,7 @@ local bugClassesData = {
 	},
 	["cold"] = {
 		fromMod = "Cold_biters",
+		phylum = {nauvis=true},
 		minEvolution = .1,
 		sizes = {
 			-- These values are copied from the values in the Cold Biters mod.
@@ -100,6 +106,7 @@ local bugClassesData = {
 	},
 	["explosive"] = {
 		fromMod = "Explosive_biters",
+		phylum = {nauvis=true},
 		minEvolution = .1,
 		sizes = {
 			-- These values are copied from the values in the Explosive Biters mod.
@@ -122,20 +129,41 @@ local bugClassesData = {
 			),
 		},
 	},
+	["pentapod"] = {
+		fromMod = "space-age",
+		phylum = {gleba=true},
+		minEvolution = 0,
+		sizes = {
+			-- These values are copied from space-age's enemy spawner prototype definition.
+			-- Note Gleba has a big spawner and a small spawner (which can be autoplaced in starting area, and can't spawn strafers and stompers). I'm only using the settings for the big spawner.
+			["small-wriggler-pentapod"] = {{0.0, 0.4}, {0.1, 0.4}, {0.6, 0}},
+			["small-strafer-pentapod"] = {{0.0, 0.4}, {0.1, 0.4}, {0.6, 0}},
+			["small-stomper-pentapod"] = {{0.0, 0.2}, {0.1, 0.2}, {0.6, 0}},
+			["medium-wriggler-pentapod"] = {{0.1, 0}, {0.6, 0.4}, {0.95, 0}},
+			["medium-strafer-pentapod"] = {{0.1, 0}, {0.6, 0.4}, {0.95, 0}},
+			["medium-stomper-pentapod"] = {{0.1, 0}, {0.6, 0.2}, {0.95, 0}},
+			["big-wriggler-pentapod"] = {{0.6, 0}, {0.95, 0.4}, {1, 0.4}},
+			["big-strafer-pentapod"] = {{0.6, 0}, {0.95, 0.4}, {1, 0.4}},
+			["big-stomper-pentapod"] = {{0.6, 0}, {0.95, 0.2}, {1, 0.2}},
+		},
+	},
 }
 
-local function getPossibleBugClasses(evolutionFactor)
+local function getPossibleBugClasses(evolutionFactor, enemyPhylum)
 	-- Makes a list of all bug classes that can be spawned at current evolution level and with currently installed mods.
 	local classes = {}
 	for bugClassName, bugClassData in pairs(bugClassesData) do
-		if game.active_mods[bugClassData.fromMod] ~= nil and bugClassData.minEvolution <= evolutionFactor then
+		if (
+				script.active_mods[bugClassData.fromMod] ~= nil
+				and bugClassData.minEvolution <= evolutionFactor
+				and bugClassData.phylum[enemyPhylum]) then
 			table.insert(classes, bugClassName)
 		end
 	end
 	return classes
 end
 
-local function selectBugClasses(evolutionFactor)
+local function selectBugClasses(evolutionFactor, enemyPhylum)
 	-- Makes a list of bug classes to spawn, which is a subset of the list of possible bug classes.
 	local classes = {}
 	local possibleClasses = getPossibleBugClasses(evolutionFactor)
@@ -193,16 +221,22 @@ local function getBugClassSizeWeights(bugClass, evolutionFactor)
 	return results
 end
 
-local function pollutionForBug(bugName)
-	if game.entity_prototypes[bugName] == nil or game.entity_prototypes[bugName].pollution_to_join_attack == nil then
+---@param bugName string
+---@param pollutionType string
+---@return number
+local function pollutionForBug(bugName, pollutionType)
+	-- Returns pollution of given type that needs to be absorbed to spawn this bug.
+	-- Assumes the .absorbption_to_join_attack table means "absorb this type OR that type", unclear whether that's what it was intended to mean but doesn't matter for normal Nauvis/Gleba enemies which all have only 1 key in the table.
+	if prototypes.entity[bugName] == nil or prototypes.entity[bugName].absorptions_to_join_attack[pollutionType] == nil then
 		log("Error: bug "..bugName.." has no prototype or no pollution_to_join_attack")
 		return 1000000
 	end
-	return game.entity_prototypes[bugName].pollution_to_join_attack * U.mapSetting("pollution-cost-multiplier")
+	return prototypes.entity[bugName].absorptions_to_join_attack[pollutionType] * U.mapSetting("pollution-cost-multiplier")
 end
 
 local function getPollutionBudget(pollutionInChunk)
 	-- Given pollution in chunk, returns the pollution budget for this swarm.
+	-- Agnostic to pollution type.
 	local pollutionFraction = U.randomBetween(
 		U.mapSetting("pollution-fraction-per-swarm-min"),
 		U.mapSetting("pollution-fraction-per-swarm-max"))
@@ -225,12 +259,18 @@ local selectBugSize = function(bugClassSizeWeights)
 	end
 end
 
-local selectBugs = function(pollutionInChunk, evolutionFactor)
+---@param pollutionInChunk number
+---@param evolutionFactor number
+---@param pollutionType string
+---@param enemyPhylum string
+---@return table, number, table
+local selectBugs = function(pollutionInChunk, evolutionFactor, pollutionType, enemyPhylum)
 	-- Given pollution in chunk and current evolution, returns a list of bug ids to spawn, the total pollution spent, and a map from bug id to pollution spent (for stats panel).
-	local bugClassSubset = selectBugClasses(evolutionFactor)
+	-- The enemyPhylum is either "nauvis" or "gleba" currently, and indicates whether biter-like enemies or gleba-like enemies are spawned.
+	local bugClassSubset = selectBugClasses(evolutionFactor, enemyPhylum)
 	if #bugClassSubset == 0 then
 		log("Error: empty bug class subset")
-		return {{}, 0, {}}
+		return {}, 0, {}
 	end
 	U.printIfDebug("Selected bug classes: "..serpent.line(bugClassSubset))
 
@@ -249,7 +289,7 @@ local selectBugs = function(pollutionInChunk, evolutionFactor)
 	for _ = 1, U.mapSetting("max-bugs-per-swarm") do
 		local bugClass = bugClassSubset[math.random(#bugClassSubset)]
 		local bugSize = selectBugSize(classSizeWeights[bugClass])
-		local pollutionForThisBug = pollutionForBug(bugSize)
+		local pollutionForThisBug = pollutionForBug(bugSize, pollutionType)
 		if (pollutionSpent + pollutionForThisBug) > pollutionBudget then
 			U.printIfDebug("Couldn't afford next bug "..bugSize.." for "..pollutionForThisBug.." pollution.")
 			break
@@ -269,7 +309,7 @@ local selectBugs = function(pollutionInChunk, evolutionFactor)
 	else
 		U.printIfDebug("Couldn't afford any bugs :(") -- Happens sometimes in low-pollution chunks with high evolution.
 	end
-	return {bugs, pollutionSpent, bugIdToPollution}
+	return bugs, pollutionSpent, bugIdToPollution
 end
 
 return {

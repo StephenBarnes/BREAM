@@ -1,18 +1,16 @@
 {
 	"name": "BREAM",
-	"version": "1.4.0",
+	"version": "2.0.0",
 	"title": "Bugs Rule Everywhere Around Me (B.R.E.A.M.)",
 	"author": "StephenB",
-	"factorio_version": "1.1",
+	"factorio_version": "2.0",
 	"dependencies": [
 		"base >= 1.1",
+		"?space-age",
 		"?ArmouredBiters",
 		"?Explosive_biters",
 		"?Cold_biters",
-		"?Toxic_biters",
-
-		"?DeadlockLargerLamp",
-		"?IndustrialRevolution3"
+		"?Toxic_biters"
 	],
 	"description": "At night, bugs can hatch out of any patch of unlit dirt. Defend against attacks from all sides."
 }

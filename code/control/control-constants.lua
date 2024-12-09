@@ -10,7 +10,11 @@ local function splitToList(s)
 	return result
 end
 Export.safeTiles = splitToList(settings.startup["BREAM-safe-tiles"].value)
-Export.surfacesForSpawns = splitToList(settings.startup["BREAM-surfaces-to-spawn-on"].value)
+
+Export.phylumSurfaces = {
+	{phylum = "nauvis", surfaceNames = splitToList(settings.startup["BREAM-surfaces-to-spawn-nauvis-enemies"].value)},
+	{phylum = "gleba", surfaceNames = splitToList(settings.startup["BREAM-surfaces-to-spawn-gleba-enemies"].value)},
+}
 
 Export.spawnPosTolerance = 2
 Export.darknessThreshold = 0.65

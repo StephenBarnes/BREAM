@@ -57,15 +57,15 @@ end
 local defaultLightRadius = 17 -- Assumed radius for unknown lamps from other mods.
 local lightRadius = {
 	["small-lamp"] = 17,
-	["deadlock-large-lamp"] = 29,
-	["deadlock-floor-lamp"] = 29,
+	--["deadlock-large-lamp"] = 29,
+	--["deadlock-floor-lamp"] = 29,
 }
 local assemblerLightRadius = {
-	["deadlock-copper-lamp"] = 29,
-	["copper-aetheric-lamp-straight"] = 12,
-	["copper-aetheric-lamp-end"] = 12,
+	--["deadlock-copper-lamp"] = 29,
+	--["copper-aetheric-lamp-straight"] = 12,
+	--["copper-aetheric-lamp-end"] = 12,
 }
-local maxLampLightRadius = 29
+local maxLampLightRadius = 17
 
 local function hasNearbyLamp(pos, surface, lampRadMultiplier)
 	-- Check all lamps registered as lamps.
@@ -158,6 +158,7 @@ Export.positionAllowsSpawn = function(pos, surface)
 			U.debugPrint("Nearby lamps blocked spawn.")
 		elseif not nearbyWaterTilesAllowSpawn(pos, surface) then
 			U.debugPrint("Water tiles blocked spawn.")
+			-- TODO check if lava and waters of Aquilo etc block spawns.
 		elseif not nearbySafeTilesAllowSpawn(pos, surface) then
 			U.debugPrint("Safe tiles blocked spawn.")
 		elseif not nearbyLitSafeTilesAllowSpawn(pos, surface) then
@@ -178,9 +179,9 @@ end
 Export.playerPosDebug = function()
 	U.debugPrint("--------------------")
 	U.debugPrint("BREAM player-position debugger, checking current position.")
-	local surface = game.get_surface(CC.surfacesForSpawns[1])
 	for _,player in pairs(game.players) do
 		local pos = player.position
+		local surface = player.surface
 		U.debugPrint("Starting peace time allows spawn: "..U.boolStr(not Export.startingPeaceActive()))
 		U.debugPrint("Darkness / time of day allows spawn: "..U.boolStr(Export.lightLevelAllowsSpawn(surface)))
 		U.debugPrint("Nearby enemies allow spawn: "..U.boolStr(nearbyEnemiesAllowSpawn(pos, surface)))

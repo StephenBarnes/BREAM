@@ -29,7 +29,8 @@ local function addSafetySetting(name, default)
 	})
 end
 
-addSetting("surfaces-to-spawn-on", "string", "startup", "nauvis")
+addSetting("surfaces-to-spawn-nauvis-enemies", "string", "startup", "nauvis")
+addSetting("surfaces-to-spawn-gleba-enemies", "string", "startup", "gleba")
 addSetting("safe-tiles", "string", "startup",
 	"stone-path,concrete,refined-concrete,tarmac,hazard-concrete-left,hazard-concrete-right,refined-hazard-concrete-left,refined-hazard-concrete-right")
 -- TODO add paving tiles from mods, eg the stone path from Space Exploration
@@ -50,7 +51,7 @@ addSetting("starting-peace-minutes", "double", "runtime-global", 10, 0)
 addSetting("only-spawn-when-dark", "bool", "runtime-global", true)
 addSetting("player-spawn-block-radius", "int", "runtime-global", 100, 0)
 addSetting("water-tile-spawn-block-radius", "int", "runtime-global", 5, 0)
-addSetting("safe-tile-spawn-block-radius", "int", "runtime-global", 0, 0)
+addSetting("safe-tile-spawn-block-radius", "int", "runtime-global", 3, 0)
 addSetting("lit-safe-tile-spawn-block-radius", "int", "runtime-global", 0, 0)
 addSetting("entity-spawn-block-radius", "int", "runtime-global", 15, 0)
 addSetting("lamp-safety-factor", "double", "runtime-global", 1.2, 0)

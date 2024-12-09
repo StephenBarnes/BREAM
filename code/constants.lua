@@ -17,7 +17,7 @@ Export.safetyCategoryToTypes = { -- Types of entities controlled by the safety s
 }
 Export.safetyCategoryToSpecial = { -- Entities that belong in these safety categories, but are not in the expected type.
 	["lamps"] = {
-		["assembling-machine"] = listToSet{"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "copper-aetheric-lamp-end"},
+		--["assembling-machine"] = listToSet{"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "copper-aetheric-lamp-end"},
 	},
 }
 

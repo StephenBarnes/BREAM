@@ -6,19 +6,32 @@ local ChooseBugs = require("code/control/choose-bugs")
 
 local Export = {}
 
-local function spawnEnemyAt(bugName, pos, group, surface)
+---@param bugName string
+---@param pos table
+---@param commandable LuaCommandable
+---@param surface LuaSurface
+local function spawnEnemyAt(bugName, pos, commandable, surface)
 	local bug = surface.create_entity{name = bugName, position = pos}
+	if bug == nil then
+		U.printIfDebug("Failed to create bug")
+		return
+	end
 	bug.ai_settings.allow_try_return_to_spawner = false
-	group.add_member(bug)
+	commandable.add_member(bug)
 end
 
-local function logBugPollutionToStats(bugTypeToPollution)
+---@param bugTypeToPollution table<string, number>
+---@param surface LuaSurface
+local function logBugPollutionToStats(bugTypeToPollution, surface)
 	for bugType, pollution in pairs(bugTypeToPollution) do
-		game.pollution_statistics.on_flow(bugType, -pollution)
+		game.get_pollution_statistics(surface).on_flow(bugType, -pollution)
 	end
 end
 
-Export.spawnEnemyGroupAt = function(centerPos, surface)
+---@param centerPos table
+---@param surface LuaSurface
+---@param enemyPhylum string
+Export.spawnEnemyGroupAt = function(centerPos, surface, enemyPhylum)
 	U.printIfDebug("Spawning a swarm at " .. math.floor(centerPos.x) .. "," .. math.floor(centerPos.y))
 	local bugPos = surface.find_non_colliding_position("behemoth-biter", centerPos, CC.spawnPosTolerance, 0.1)
 	if bugPos == nil then
@@ -30,13 +43,13 @@ Export.spawnEnemyGroupAt = function(centerPos, surface)
 		U.printIfDebug("Pollution is zero, cannot spawn bugs")
 		return
 	end
-	local bugsAndPollutionSpent = ChooseBugs.selectBugs(pollution, game.forces.enemy.evolution_factor)
+	local bugsAndPollutionSpent = ChooseBugs.selectBugs(pollution, game.forces.enemy.get_evolution_factor(surface), surface.pollutant_type.name, enemyPhylum)
 	local bugs = bugsAndPollutionSpent[1]
 	local pollutionSpent = bugsAndPollutionSpent[2]
 	local bugTypeToPollution = bugsAndPollutionSpent[3]
 	if #bugs == 0 then return end
 	surface.pollute(centerPos, -pollutionSpent)
-	logBugPollutionToStats(bugTypeToPollution)
+	logBugPollutionToStats(bugTypeToPollution, surface)
 	local group = surface.create_unit_group{position = centerPos}
 	for i = 1, #bugs do
 		spawnEnemyAt(bugs[i], bugPos, group, surface)
