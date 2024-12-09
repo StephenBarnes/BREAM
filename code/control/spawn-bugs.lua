@@ -47,7 +47,11 @@ Export.spawnEnemyGroupAt = function(centerPos, surface, enemyPhylum)
 	local bugs = bugsAndPollutionSpent[1]
 	local pollutionSpent = bugsAndPollutionSpent[2]
 	local bugTypeToPollution = bugsAndPollutionSpent[3]
-	if #bugs == 0 then return end
+	if #bugs == 0 then
+		U.printIfDebug("No bugs selected")
+		return
+	end
+	U.printIfDebug("Selected "..#bugs.." bugs, total pollution spent: "..math.floor(pollutionSpent)..".")
 	surface.pollute(centerPos, -pollutionSpent)
 	logBugPollutionToStats(bugTypeToPollution, surface)
 	local group = surface.create_unit_group{position = centerPos}

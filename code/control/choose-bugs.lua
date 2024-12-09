@@ -149,6 +149,9 @@ local bugClassesData = {
 	},
 }
 
+---@param evolutionFactor number
+---@param enemyPhylum string
+---@return string[]
 local function getPossibleBugClasses(evolutionFactor, enemyPhylum)
 	-- Makes a list of all bug classes that can be spawned at current evolution level and with currently installed mods.
 	local classes = {}
@@ -166,7 +169,7 @@ end
 local function selectBugClasses(evolutionFactor, enemyPhylum)
 	-- Makes a list of bug classes to spawn, which is a subset of the list of possible bug classes.
 	local classes = {}
-	local possibleClasses = getPossibleBugClasses(evolutionFactor)
+	local possibleClasses = getPossibleBugClasses(evolutionFactor, enemyPhylum)
 	if #possibleClasses == 0 then return {} end
 	if #possibleClasses == 1 then return possibleClasses end
 
@@ -263,14 +266,14 @@ end
 ---@param evolutionFactor number
 ---@param pollutionType string
 ---@param enemyPhylum string
----@return table, number, table
+---@return [table<number, string>, number, table<string, number>]
 local selectBugs = function(pollutionInChunk, evolutionFactor, pollutionType, enemyPhylum)
 	-- Given pollution in chunk and current evolution, returns a list of bug ids to spawn, the total pollution spent, and a map from bug id to pollution spent (for stats panel).
 	-- The enemyPhylum is either "nauvis" or "gleba" currently, and indicates whether biter-like enemies or gleba-like enemies are spawned.
 	local bugClassSubset = selectBugClasses(evolutionFactor, enemyPhylum)
 	if #bugClassSubset == 0 then
-		log("Error: empty bug class subset")
-		return {}, 0, {}
+		U.printIfDebug("Empty bug class subset")
+		return {{}, 0, {}}
 	end
 	U.printIfDebug("Selected bug classes: "..serpent.line(bugClassSubset))
 
@@ -309,7 +312,7 @@ local selectBugs = function(pollutionInChunk, evolutionFactor, pollutionType, en
 	else
 		U.printIfDebug("Couldn't afford any bugs :(") -- Happens sometimes in low-pollution chunks with high evolution.
 	end
-	return bugs, pollutionSpent, bugIdToPollution
+	return {bugs, pollutionSpent, bugIdToPollution}
 end
 
 return {
