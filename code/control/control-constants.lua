@@ -9,7 +9,16 @@ local function splitToList(s)
 	end
 	return result
 end
-Export.safeTiles = splitToList(settings.startup["BREAM-safe-tiles"].value)
+
+local possibleSafeTiles = splitToList(settings.startup["BREAM-safe-tiles"].value)
+Export.safeTiles = {}
+for _, tileName in pairs(possibleSafeTiles) do
+	if prototypes.tile[tileName] ~= nil then
+		table.insert(Export.safeTiles, tileName)
+	else
+		log("Warning: safe tile "..tileName.." is not a valid tile name.")
+	end
+end
 
 Export.phylumSurfaces = {
 	{phylum = "nauvis", surfaceNames = splitToList(settings.startup["BREAM-surfaces-to-spawn-nauvis-enemies"].value)},
