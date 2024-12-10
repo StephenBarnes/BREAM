@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+Date: 9. 12. 2024
+  Features:
+    - TODO Added compatibility for Behemoth Enemies mod.
+  Bugfixes:
+    - Added foundation as a default safe tile.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: 9. 12. 2024
   Features:
