@@ -3,6 +3,19 @@
 
 local U = require("code/util")
 
+local function getSpawnPointsByUnitNameFromSpawner(spawnerName)
+	local r = {}
+	for _, unitSpawnDef in pairs(prototypes.entity[spawnerName].result_units) do
+		spawnPoints = {}
+		for _, spawnPoint in pairs(unitSpawnDef.spawn_points) do
+			table.insert(spawnPoints, {spawnPoint.evolution_factor, spawnPoint.weight})
+			-- TODO maybe instead of doing this, just keep them as SpawnPointDefinition's.
+		end
+		r[unitSpawnDef.unit] = spawnPoints
+	end
+	return r
+end
+
 -- Table mapping bug class name to a table with:
 -- * fromMod: id of mod that added this bug class, so we only spawn bugs from mods that are enabled
 -- * phylum: table mapping enemy phylums (nauvis, gleba, maybe others later) to true if this bug class is included in that phylum. (Bugs can be in more than 1 phylum.)
@@ -14,6 +27,7 @@ local U = require("code/util")
 --     For evolution in between those, we linearly interpolate the weight.
 --     Given current evolution value, we decide which bug classes to spawn, then use these weights to decide which sizes to spawn.
 --  Note each size's spawn points must be ordered by first value (evolution factor).
+-- TODO I think we can simplify stuff below by just using getSpawnPointsByUnitNameFromSpawner instead of copying spawn points from the mods.
 local bugClassesData = {
 	["biter"] = {
 		fromMod = "base",
@@ -133,19 +147,10 @@ local bugClassesData = {
 		fromMod = "space-age",
 		phylum = {gleba=true},
 		minEvolution = 0,
-		sizes = {
-			-- These values are copied from space-age's enemy spawner prototype definition.
-			-- Note Gleba has a big spawner and a small spawner (which can be autoplaced in starting area, and can't spawn strafers and stompers). I'm only using the settings for the big spawner.
-			["small-wriggler-pentapod"] = {{0.0, 0.4}, {0.1, 0.4}, {0.6, 0}},
-			["small-strafer-pentapod"] = {{0.0, 0.4}, {0.1, 0.4}, {0.6, 0}},
-			["small-stomper-pentapod"] = {{0.0, 0.2}, {0.1, 0.2}, {0.6, 0}},
-			["medium-wriggler-pentapod"] = {{0.1, 0}, {0.6, 0.4}, {0.95, 0}},
-			["medium-strafer-pentapod"] = {{0.1, 0}, {0.6, 0.4}, {0.95, 0}},
-			["medium-stomper-pentapod"] = {{0.1, 0}, {0.6, 0.2}, {0.95, 0}},
-			["big-wriggler-pentapod"] = {{0.6, 0}, {0.95, 0.4}, {1, 0.4}},
-			["big-strafer-pentapod"] = {{0.6, 0}, {0.95, 0.4}, {1, 0.4}},
-			["big-stomper-pentapod"] = {{0.6, 0}, {0.95, 0.2}, {1, 0.2}},
-		},
+		-- Copy enemy spawner data from the unit spawner.
+		-- Note Gleba has a big spawner and a small spawner (which can be autoplaced in starting area, and can't spawn strafers and stompers). I'm only using the settings for the big spawner.
+		-- Note this gives compat with the Gleba enemies from Behemoth Enemies mod, since that mod modifies the spawner's .result_units.
+		sizes = getSpawnPointsByUnitNameFromSpawner("gleba-spawner"),
 	},
 }
 
@@ -221,6 +226,8 @@ local function getBugClassSizeWeights(bugClass, evolutionFactor)
 	for sizeId, weight in pairs(results) do
 		results[sizeId] = weight / sum
 	end
+	--U.printIfDebug("Bug class size weights for "..bugClass..": "..serpent.line(results))
+	--log("Bug class size weights for "..bugClass..": "..serpent.line(results))
 	return results
 end
 

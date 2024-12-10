@@ -23,8 +23,9 @@ for eventFilterType, _ in pairs(toMakeSafe) do
 	table.insert(eventFilters, {filter = "type", type = eventFilterType})
 end
 
+---@param event EventData.on_built_entity | EventData.on_robot_built_entity
 local function onBuilt(event)
-	local entity = event.created_entity
+	local entity = event.entity
 	local safeSet = toMakeSafe[entity.type]
 	if safeSet ~= nil then
 		if safeSet == true or safeSet[entity.name] then

@@ -1,9 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
-Date: 9. 12. 2024
+Date: 10. 12. 2024
   Features:
-    - TODO Added compatibility for Behemoth Enemies mod.
+    - Added compatibility with Behemoth Enemies mod.
   Bugfixes:
+    - Fixed crash when building rails.
+    - Rail safety settings now apply to rail supports, rail ramps, elevated rails, and 2.0's diagonal/curved rails.
     - Added foundation as a default safe tile.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0

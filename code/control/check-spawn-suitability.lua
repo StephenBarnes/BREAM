@@ -74,14 +74,14 @@ local function hasNearbyLamp(pos, surface, lampRadMultiplier)
 	-- Check all lamps registered as lamps.
 	local searchRadius = lampRadMultiplier * maxLampLightRadius
 	local lamps = surface.find_entities_filtered{position=pos, radius=searchRadius, type="lamp"}
-	for i, lamp in pairs(lamps) do
+	for _, lamp in pairs(lamps) do
 		if isLampOn(lamp, surface) then
 			local x = (lamp.bounding_box.left_top.x + lamp.bounding_box.right_bottom.x) / 2
 			local y = (lamp.bounding_box.left_top.y + lamp.bounding_box.right_bottom.y) / 2
 			local distanceSq = math.pow(pos.x - x, 2) + math.pow(pos.y - y, 2)
 			local distance = math.sqrt(distanceSq)
-			local lightRadius = lightRadius[lamp.name] or defaultLightRadius
-			if (lightRadius * lampRadMultiplier) > distance then return true end
+			local thisLightRad = lightRadius[lamp.name] or defaultLightRadius
+			if (thisLightRad * lampRadMultiplier) > distance then return true end
 		end
 	end
 
