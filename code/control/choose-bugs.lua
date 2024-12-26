@@ -5,7 +5,9 @@ local U = require("code/util")
 
 local function getSpawnPointsByUnitNameFromSpawner(spawnerName)
 	local r = {}
-	for _, unitSpawnDef in pairs(prototypes.entity[spawnerName].result_units) do
+	local spawner = prototypes.entity[spawnerName]
+	if spawner == nil or spawner.result_units == nil then return {} end
+	for _, unitSpawnDef in pairs(spawner.result_units) do
 		spawnPoints = {}
 		for _, spawnPoint in pairs(unitSpawnDef.spawn_points) do
 			table.insert(spawnPoints, {spawnPoint.evolution_factor, spawnPoint.weight})
