@@ -18,6 +18,7 @@ local function spawnEnemyAt(bugName, pos, commandable, surface)
 	end
 	bug.ai_settings.allow_try_return_to_spawner = false
 	commandable.add_member(bug)
+	script.raise_event(defines.events.script_raised_built, {entity = bug, name = defines.events.script_raised_built, tick = game.tick})
 end
 
 ---@param bugTypeToPollution table<string, number>

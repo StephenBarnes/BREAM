@@ -1,11 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.2
+Date: 2025-04-02
+  Compatibility:
+    - Raise script_raised_built event for compatibility with More Enemies mod.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.1
-Date: 26. 12. 2024
+Date: 2024-12-26
   Bugfixes:
     - Fixed crash when used without Space Age.
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
-Date: 10. 12. 2024
+Date: 2024-12-10
   Features:
     - Added compatibility with Behemoth Enemies mod.
   Bugfixes:
@@ -14,7 +19,7 @@ Date: 10. 12. 2024
     - Added foundation as a default safe tile.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0
-Date: 9. 12. 2024
+Date: 2024-12-09
   Features:
     - Updated to Factorio 2.0.
     - Works with or without Space Age. Enemies are spawned on Nauvis and Gleba.
@@ -26,7 +31,7 @@ Date: 9. 12. 2024
     - Removed compatibility with Larger Lamps and Industrial Revolution 3, which aren't ported to Factorio 2.0. (Still compatible with Armoured Biters, Explosive Biters, Frost Biters, Toxic Biters.)
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.0
-Date: 10. 08. 2024
+Date: 2024-08-10
   Features:
     - Added compatibility for Toxic Biters mod, Frost Biters mod, and Explosive Biters mod.
     - Bugs now spawn in the same size ratios as in the vanilla game. Bugs from supported mods will also spawn in the same size ratios as in their respective mods.
@@ -36,7 +41,7 @@ Date: 10. 08. 2024
     - Changed default settings so instead of each spawn consuming 30-90% of the chunk's pollution, it consumes 20-60%. So bugs spawn more often, in smaller groups.
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.0
-Date: 07. 07. 2024
+Date: 2024-07-07
   Features:
     - For lights, power poles, railroads, and rail signals: added options to make biters ignore them or target them.
     - Added option to print to console when spawning enemies.
@@ -44,7 +49,7 @@ Date: 07. 07. 2024
     - Adjusted default settings to be easier, because I did some playtesting and got absolutely crushed.
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: 22. 06. 2024
+Date: 2024-06-22
   Features:
     - Added "lit safe tiles" setting.
   Balancing:
@@ -52,11 +57,11 @@ Date: 22. 06. 2024
     - Modified curve of bug size by evolution so only small bugs will be spawned at low evolution.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
-Date: 01. 06. 2024
+Date: 2024-06-01
   Features:
     - Pollution used by BREAM to spawn bugs is now shown in the pollution statistics window.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 27. 05. 2024
+Date: 2024-05-27
   Features:
     - Initial release.
